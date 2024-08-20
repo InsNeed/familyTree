@@ -1,0 +1,177 @@
+﻿@model FamilyTree.Models.Person
+
+
+@{
+	ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+@if (TempData["SuccessMessage"] != null)
+{
+	<div class="alert alert-success">
+		@TempData["SuccessMessage"]
+	</div>
+}
+
+@section Scripts {
+	<script src="@Url.Content("~/js/RegionsSelection.js")"> </script>
+}
+
+<h4>Person</h4>
+<hr />
+<div class="row">
+	<div class="col-md-4">
+		<form asp-action="Create" enctype="multipart/form-data">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<div class="form-group">
+				<label asp-for="LastName" class="control-label"></label>
+				<input asp-for="LastName" class="form-control" />
+				<span asp-validation-for="LastName" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="FirstName" class="control-label"></label>
+				<input asp-for="FirstName" class="form-control" />
+				<span asp-validation-for="FirstName" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="Gender"></label>
+				<select asp-for="Gender" class="form-control">
+					<option value="男">男</option>
+					<option value="女">女</option>
+					<option value="未知" selected>未知</option>
+					<option value="其他">其他</option>
+					<span asp-validation-for="Gender" class="text-danger" />
+				</select>
+				<span asp-validation-for="Gender" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="Birthday" class="control-label"></label>
+				<input asp-for="Birthday" class="form-control" />
+				<span asp-validation-for="Birthday" class="text-danger"></span>
+			</div>
+
+			<div class="form-group">
+				<label asp-for="Age" class="control-label"></label>
+				<input asp-for="Age" class="form-control" />
+				<span asp-validation-for="Age" class="text-danger"></span>
+			</div>
+
+			<div class="form-group">
+				<label asp-for="Father" class="control-label"></label>
+				<input name="FatherName" id="FatherName" value="" class="form-control" />
+			</div>
+			<div class="form-group">
+				<label asp-for="Mother" class="control-label"></label>
+				<input name="MotherName" id="MotherName" value="" class="form-control" />
+			</div>
+
+			@if (ViewData["DuplicateParents"] != null)
+			{
+				var parents = ViewData["DuplicateParents"] as List<Person>;
+				<h3>信息如下</h3>
+				@foreach (Person parent in parents)
+				{
+					<div>
+						ID：@parent.ID ,全名：@parent.LastName @parent.FirstName ,年龄: @parent.Age ,地区编码: @parent.RegionId
+					</div>
+				}
+			}
+
+
+			<div>
+				<label asp-for="PhotoUrl" class="control-label"></label>
+				<input type="file" name="Photo" class="form-control" accept="image/*" />
+			</div>
+			
+			<div>
+				<label for="province">Province:</label>
+				<select id="province" name="province" class="form-control">
+					<option value="">Select Province</option>
+				</select>
+
+				<label for="city">city:</label>
+				<select id="city" name="city" class="form-control">
+					<option value="">Select City</option>
+				</select>
+
+				<label for="area">area:</label>
+				<select id="area" name="area" class="form-control">
+					<option value="">Select District</option>
+				</select>
+
+				<label for="street">street:</label>
+				<select id="street" name="street" class="form-control">
+					<option value="">Select street</option>
+				</select>
+
+				<label for="village">area:</label>
+				<select id="village" name="village" class="form-control">
+					<option value="">Select village</option>
+				</select>
+			</div>
+
+			<div class="form-group">
+				<input type="submit" value="Create" class="btn btn-primary" />
+			</div>
+
+
+		</form>
+
+
+	</div>
+</div>
+
+<div>
+	<a asp-action="Index">Back to List</a>
+</div>
+@*
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Load provinces on page load
+            $.getJSON('/Regions/GetProvinces', function (data) {
+                $.each(data, function (i, province) {
+                    $('#province').append($('<option>', {
+                        value: province,
+                        text: province
+                    }));
+                });
+            });
+
+            // Load cities when a province is selected
+            $('#province').change(function () {
+                var province = $(this).val();
+                $('#city').empty().append('<option value="">Select City</option>');
+                $('#district').empty().append('<option value="">Select District</option>');
+                if (province) {
+                    $.getJSON('/Regions/GetCities', { province: province }, function (data) {
+                        $.each(data, function (i, city) {
+                            $('#city').append($('<option>', {
+                                value: city,
+                                text: city
+                            }));
+                        });
+                    });
+                }
+            });
+
+            // Load districts when a city is selected
+            $('#city').change(function () {
+                var city = $(this).val();
+                $('#district').empty().append('<option value="">Select District</option>');
+                if (city) {
+                    $.getJSON('/Regions/GetDistricts', { city: city }, function (data) {
+                        $.each(data, function (i, district) {
+                            $('#district').append($('<option>', {
+                                value: district,
+                                text: district
+                            }));
+                        });
+                    });
+                }
+            });
+        });
+    </script>
+}
+ *@

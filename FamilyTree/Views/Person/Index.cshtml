@@ -1,0 +1,168 @@
+﻿@model PaginatedList<FamilyTree.Models.Person>
+
+@{
+	ViewData["Title"] = "Index";
+}
+
+<h2> CREATE </h2>
+
+<p>
+	<a asp-action="Create">Create New</a>
+</p>
+
+@if (ViewData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @ViewData["ErrorMessage"]
+    </div>
+}
+
+<form asp-action="Index" method="get">
+	<div class="form-actions no-color">
+		<p>
+			Find by name: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
+			<input type="submit" value="Search" class="btn btn-default" />
+		</p>
+	</div>
+</form>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>
+				<a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Last Name</a>
+			</th>
+			<th>
+				First Name
+			</th>
+			<th>
+				<a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Birthday</a>
+			</th>
+			<th>
+				Age
+			</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model)
+		{
+			string selectedRow = "";
+			if (item.ID == (int?)ViewData["PersonID"])
+			{
+				selectedRow = "table-success";
+			}
+			<tr class="@selectedRow">
+				<td>
+					@Html.DisplayFor(modelItem => item.LastName)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.FirstName)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Birthday)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Age)
+				</td>
+				<td>
+					<a asp-action="Index" asp-route-id="@item.ID">Select</a> |
+					<a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+					<a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+					<a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+
+
+@{
+	var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+	var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+
+	// 从 ViewData 获取家族树
+
+	// 定义 RenderTree 函数
+
+	// void RenderTree(FamilyTree.Controllers.PersonController.TreeNode node)
+	// {
+	// 	if (node != null)
+	// 	{
+	// 		<li>
+	// 			@node.person.LastName @node.person.FirstName
+	// 			@if (node.Children.Any())
+	// 			{
+	// 				<ul>
+	// 					@foreach (var child in node.Children)
+	// 					{
+	// 						RenderTree(child);
+	// 					}
+	// 				</ul>
+	// 			}
+	// 		</li>
+	// 	}
+	// }
+}
+
+
+
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @prevDisabled">
+	Previous
+</a>
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @nextDisabled">
+	Next
+</a>
+
+@{
+	void RenderTree(FamilyTree.Controllers.PersonController.TreeNode node)
+	{
+		if (node != null)
+		{
+			<li>
+				@node.person.LastName @node.person.FirstName 
+				@if (node.spouseId.Count() > 0)
+				{
+					<span>  配偶为  </span>
+
+				}
+				@foreach(string name in node.spouseName)
+				{
+					<span>@name |</span>
+				}
+
+				@if (node.Children.Any())
+				{
+					<ul>
+						@foreach (var child in node.Children)
+						{
+							RenderTree(child);
+						}
+					</ul>
+				}
+			</li>
+		}
+	}
+}
+
+@if (ViewData["PersonID"] != null)
+{
+	var familyTree = ViewData["FamilyTree"] as FamilyTree.Controllers.PersonController.TreeNode;
+	<h3>Family Tree</h3>
+	<ul>
+		@{RenderTree(familyTree);}
+
+	</ul>
+}
+else
+{
+	<p>No family tree data available.</p>
+}

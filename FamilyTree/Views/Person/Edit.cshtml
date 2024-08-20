@@ -1,0 +1,148 @@
+﻿@model FamilyTree.Models.Person
+
+@{
+	ViewData["Title"] = "Edit";
+}
+
+@* @section Scripts {
+} *@
+
+<h1>Edit</h1>
+
+<h4>Person</h4>
+
+<div class="row">
+
+
+
+	<p>
+		<div>
+			@if (!string.IsNullOrEmpty(Model.PhotoUrl))
+			{
+				<p>
+					<a href="@Url.Action("GetPhoto", "Person", new { id = Model.ID, fileName = Model.PhotoUrl })" target="_blank">
+						<img src="/@Model.PhotoUrl" alt="Person Photo" style="width: 100px; height: auto;" />
+					</a>
+				</p>
+			}
+		</div>
+	</p>
+	<div class="col-md-4">
+		<form asp-action="Edit" enctype="multipart/form-data">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<input type="hidden" asp-for="ID" />
+
+			<div>
+				<input type="file" name="Photo" class="form-control" accept="image/*" />
+			</div>
+
+			<div class="form-group">
+				<label asp-for="LastName" class="control-label"></label>
+				<input asp-for="LastName" class="form-control" />
+				<span asp-validation-for="LastName" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="FirstName" class="control-label"></label>
+				<input asp-for="FirstName" class="form-control" />
+				<span asp-validation-for="FirstName" class="text-danger"></span>
+			</div>
+
+			<div class="form-group">
+				<label asp-for="Gender"></label>
+				<select asp-for="Gender" class="form-control">
+					<option value="男">男</option>
+					<option value="女">女</option>
+					<option value="未知">未知</option>
+					<option value="其他">其他</option>
+					<span asp-validation-for="Gender" class="text-danger" />
+				</select>
+				<span asp-validation-for="Gender" class="text-danger"></span>
+			</div>
+
+			<div class="form-group">
+				<label asp-for="Birthday" class="control-label"></label>
+				<input asp-for="Birthday" class="form-control" />
+				<span asp-validation-for="Birthday" class="text-danger"></span>
+			</div>
+
+			<div class="form-group">
+				<label asp-for="Age" class="control-label"></label>
+				<input asp-for="Age" class="form-control" />
+				<span asp-validation-for="Age" class="text-danger"></span>
+			</div>
+
+
+
+			<div class="form-group">
+				<label asp-for="Father" class="control-label"></label>
+				<input name="Father" id="Father" value="@ViewData["Father"]" class="form-control" />
+			</div>
+			<div class="form-group">
+				<label asp-for="Mother" class="control-label"></label>
+				<input name="Mother" id="Mother" value="@ViewData["Mother"]" class="form-control" />
+			</div>
+
+			@if (ViewData["DuplicateParents"] != null)
+			{
+				var parents = ViewData["DuplicateParents"] as List<Person>;
+				<h3>信息如下</h3>
+				@foreach (Person parent in parents)
+				{
+					<div>
+						ID：@parent.ID ,全名：@parent.LastName @parent.FirstName ,年龄: @parent.Age ,地区编码: @parent.RegionId
+					</div>
+				}
+			}
+
+
+
+
+			<div>
+				<label for="province">Province:</label>
+				<select id="province" name="province" class="form-control" value = "@Model.ProvinceId">
+					<option value="">@ViewData["Province"]</option>
+				</select>
+
+				<label for="city">City:</label>
+				<select id="city" name="city" class="form-control">
+					<option value="">@ViewData["City"]</option>
+				</select>
+
+				<label for="area">Area:</label>
+				<select id="area" name="Area" class="form-control">
+					<option value="">@ViewData["Area"]</option>
+				</select>
+
+				<label for="street">Street:</label>
+				<select id="street" name="street" class="form-control">
+					<option value="">@ViewData["Street"]</option>
+				</select>
+
+				<label for="village">Village:</label>
+				<select id="village" name="village" class="form-control">
+					<option value="">@ViewData["Village"]</option>
+				</select>
+			</div>
+
+			<div class="form-group">
+				<input type="submit" value="Save" class="btn btn-primary" />
+			</div>
+
+		</form>
+	</div>
+</div>
+
+<div>
+	<a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+		<script src="~/js/RegionsSelection.js"> </script>
+
+	}
+}
+<script>
+	var personProvince = @ViewData["Province"]; 
+</script>

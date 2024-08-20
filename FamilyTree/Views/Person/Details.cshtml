@@ -1,0 +1,119 @@
+﻿@model FamilyTree.Models.Person
+
+@{
+	ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+	<h4>Person</h4>
+
+	<div>
+		@if (!string.IsNullOrEmpty(Model.PhotoUrl))
+		{
+			<p>
+				<a href="@Url.Action("GetPhoto", "Person", new { id = Model.ID, fileName = Model.PhotoUrl })" target="_blank">
+					<img src="/@Model.PhotoUrl" alt="Person Photo" style="width: 100px; height: auto;" />
+				</a>
+			</p>
+		}
+	</div>
+
+	<dl class="row">
+
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.LastName)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.LastName)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.FirstName)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.FirstName)
+		</dd>
+
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Gender)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Gender)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Birthday)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Birthday)
+		</dd>
+		@* 		<dt class="col-sm-2">
+		@Html.DisplayNameFor(model => model.PlaceOfOrigin)
+		</dt>
+		<dd class="col-sm-10">
+		@Html.DisplayFor(model => model.PlaceOfOrigin)
+		</dd> *@
+
+@* 		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.RegionId)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.RegionId)
+		</dd> *@
+
+		<dt class="col-sm-2">Province</dt>
+		<dd class="col-sm-10">@ViewData["Province"]</dd>
+
+		<dt class="col-sm-2">City</dt>
+		<dd class="col-sm-10">@ViewData["City"]</dd>
+
+		<dt class="col-sm-2">Area</dt>
+		<dd class="col-sm-10">@ViewData["Area"]</dd>
+
+		<dt class="col-sm-2">Street</dt>
+		<dd class="col-sm-10">@ViewData["Street"]</dd>
+
+		<dt class="col-sm-2">Village</dt>
+		<dd class="col-sm-10">@ViewData["Village"]</dd>
+
+
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Age)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Age)
+		</dd>
+
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Father)
+		</dt>
+		<dd class="col-sm-10">
+			<a href="@Url.Action("Details", "Person", new { id = Model.Father })">
+				@Html.DisplayFor(model => model.Father)
+			</a>
+			@ViewData["FatherName"]
+		</dd>
+
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Mother)
+		</dt>
+
+		<dd class="col-sm-10">
+			<a href="@Url.Action("Details", "Person", new { id = Model.Mother })">
+				@Html.DisplayFor(model => model.Mother)
+			</a>
+			@ViewData["MotherName"]
+		</dd>
+
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.ID)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.ID)
+		</dd>
+	</dl>
+</div>
+<div>
+	<a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |
+	<a asp-action="Index">Back to List</a>
+</div>
