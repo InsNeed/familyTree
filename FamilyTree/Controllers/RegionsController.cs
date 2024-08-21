@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FamilyTree.Data;
 using FamilyTree.Models;
+using FamilyTree.Models.RegionModel;
 
 namespace FamilyTree.Controllers
 {
@@ -209,33 +210,41 @@ namespace FamilyTree.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult GetAreas(string city)
+		public IActionResult GetAreas(string province,string city)
 		{
-			var SelectedCity = _context.Cities.Where(c => c.Name == city).FirstOrDefault();
-            var areas = _context.Areas
-                .Where(a => a.CityCode == SelectedCity.Code && a.ProvinceCode == SelectedCity.ProvinceCode)
+            if (province == null || city == null) { return null; }
+            var SelectedProvince = _context.Provinces.Where(p => p.Name == province).FirstOrDefault();
+			var SelectedCity = _context.Cities.Where(c => c.ProvinceCode == SelectedProvince.Code && c.Name == city).FirstOrDefault();
+			var areas = _context.Areas
+                .Where(a => a.ProvinceCode == SelectedProvince.Code && a.CityCode == SelectedCity.Code)
                 .Select(c => c.Name)
 				.ToList();
 			return Json(areas);
 		}
 
 		[HttpGet]
-		public IActionResult GetStreets(string area)
+		public IActionResult GetStreets(string province, string city,string area)
 		{
-			var SelectedArea = _context.Areas.Where(a => a.Name == area).FirstOrDefault();
+            var SelectedProvince = _context.Provinces.Where(p => p.Name == province).FirstOrDefault();
+            var SelectedCity = _context.Cities.Where(c => c.Name == city).FirstOrDefault();
+            var SelectedArea = _context.Areas.Where(a => a.Name == area).FirstOrDefault();
+
 			var streets = _context.Streets
-				.Where(s => s.AreaCode == SelectedArea.Code && s.CityCode == SelectedArea.CityCode)
+				.Where(s => s.AreaCode == SelectedArea.Code && s.ProvinceCode == SelectedProvince.Code && s.AreaCode == SelectedArea.Code)
 				.Select(c => c.Name)
 				.ToList();
 			return Json(streets);
 		}
 
 		[HttpGet]
-		public IActionResult GetVillages(string street)
+		public IActionResult GetVillages(string province, string city, string area,string street)
 		{
-			var SelectedStreet = _context.Streets.Where(s => s.Name == street).FirstOrDefault();
+            var SelectedProvince = _context.Provinces.Where(p => p.Name == province).FirstOrDefault();
+            var SelectedCity = _context.Cities.Where(c => c.Name == city && c.ProvinceCode == SelectedProvince.Code).FirstOrDefault();
+            var SelectedArea = _context.Areas.Where(a => a.Name == area && a.CityCode == SelectedCity.Code).FirstOrDefault();
+            var SelectedStreet = _context.Streets.Where(s => s.Name == street && s.AreaCode == SelectedArea.Code).FirstOrDefault();
 			var villages = _context.Villages
-				.Where(v => v.StreetCode == SelectedStreet.Code && v.CityCode == SelectedStreet.CityCode && v.AreaCode == SelectedStreet.AreaCode)
+				.Where(v => v.StreetCode == SelectedStreet.Code && v.ProvinceCode==SelectedProvince.Code && v.AreaCode == SelectedArea.Code)
 				.Select(c => c.Name)
 				.ToList();
 			return Json(villages);

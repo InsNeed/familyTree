@@ -1,4 +1,6 @@
-﻿@model FamilyTree.Models.Person
+﻿@using FamilyTree.Models.ViewModel
+
+@model FamilyTree.Models.Person
 
 
 @{
@@ -68,12 +70,12 @@
 
 			@if (ViewData["DuplicateParents"] != null)
 			{
-				var parents = ViewData["DuplicateParents"] as List<Person>;
+				var parents = ViewData["DuplicateParents"] as List<PersonView>;
 				<h3>信息如下</h3>
-				@foreach (Person parent in parents)
+				@foreach (var parent in parents)
 				{
 					<div>
-						ID：@parent.ID ,全名：@parent.LastName @parent.FirstName ,年龄: @parent.Age ,地区编码: @parent.RegionId
+						ID：@parent.person.ID , 年龄: @parent.person.Age , 地区: @parent.Province@parent.City@parent.Area@parent.Street@parent.Village
 					</div>
 				}
 			}

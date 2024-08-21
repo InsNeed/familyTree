@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using System.Security;
 using Microsoft.CodeAnalysis;
-using FamilyTree.Models.RegionModel;
+using FamilyTree.Models.ViewModel;
 
 namespace FamilyTree.Controllers
 {
@@ -211,11 +211,11 @@ namespace FamilyTree.Controllers
 			ViewData["Mother"] = person.Mother;
 
 			//籍贯
-			ViewData["Province"] = person.ProvinceId == null ? "SELECT" : GetProvince(person);
-			ViewData["City"] = person.CityId == null ? "SELECT" : GetCity(person);
-			ViewData["Area"] = person.AreaId == null ? "SELECT" : GetArea(person);
-			ViewData["Street"] = person.StreetId == null ? "SELECT" : GetStreet(person);
-			ViewData["Village"] = person.VillageId == null ? "SELECT" : GetVillage(person);
+			ViewData["Province"] = person.ProvinceId == null ? null : GetProvince(person);
+			ViewData["City"] = person.CityId == null ? null: GetCity(person);
+			ViewData["Area"] = person.AreaId == null ? null : GetArea(person);
+			ViewData["Street"] = person.StreetId == null ? null : GetStreet(person);
+			ViewData["Village"] = person.VillageId == null ? null : GetVillage(person);
 
 			return View(person);
 		}
@@ -424,8 +424,22 @@ namespace FamilyTree.Controllers
 			}
 			else if (ParentList.Count > 1)
 			{
-				ViewData["DuplicateParents"] = ParentList;
+
 				ModelState.AddModelError("", "父或母与他人重名，用ID添加");
+				
+				List<PersonView> ViewList = new List<PersonView>();
+				for (int i = 0; i < ParentList.Count; i++)
+				{
+					PersonView p = new PersonView();
+					p.person = ParentList[i];
+					p.Province = GetProvince(ParentList[i]);
+					p.City = GetCity(ParentList[i]);
+					p.Area = GetArea(ParentList[i]);
+					p.Street = GetStreet(ParentList[i]);
+					p.Village = GetVillage(ParentList[i]);
+					ViewList.Add(p);
+				}
+				ViewData["DuplicateParents"] = ViewList;
 				return false;
 			}
 			//根据标识设置父母
@@ -725,7 +739,7 @@ namespace FamilyTree.Controllers
 					.FirstOrDefault();
 
 				person.AreaId = _context.Areas
-					.Where(a => a.Name == area && a.CityCode == person.CityId)
+					.Where(a => a.Name == area )
 					.Select(a => a.Code)
 					.FirstOrDefault();
 
@@ -747,6 +761,30 @@ namespace FamilyTree.Controllers
 			}
 		}
 
+		/// <summary>
+		/// 给Json
+		/// </summary>
+		/// <returns></returns>
+		//public IActionResult RegionNames(Person person)
+		//{
+		//	// 读取 JSON 文件内容
+		//	var ProvinceName = GetProvince(person);
+		//	var CityName = GetCity(person);
+		//	var AreaName = GetArea(person);
+		//	var StreetName = GetStreet(person);
+		//	var VillageName = GetVillage(person);
+
+		//	return Json(new
+		//	{
+		//		ProvinceName = ProvinceName,
+		//		CityName = CityName,
+		//		AreaName = AreaName,
+		//		StreetName = StreetName,
+		//		VillageName = VillageName
+		//	});
+
+		//	return View();
+		//}
 
 		public string? GetProvince(Person person)
 		{

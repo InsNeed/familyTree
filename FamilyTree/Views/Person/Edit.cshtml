@@ -1,4 +1,5 @@
-﻿@model FamilyTree.Models.Person
+﻿@using FamilyTree.Models.ViewModel
+@model FamilyTree.Models.Person
 
 @{
 	ViewData["Title"] = "Edit";
@@ -84,13 +85,14 @@
 
 			@if (ViewData["DuplicateParents"] != null)
 			{
-				var parents = ViewData["DuplicateParents"] as List<Person>;
+				var parents = ViewData["DuplicateParents"] as List<PersonView>;
 				<h3>信息如下</h3>
-				@foreach (Person parent in parents)
+				@foreach (var person in parents)
 				{
 					<div>
-						ID：@parent.ID ,全名：@parent.LastName @parent.FirstName ,年龄: @parent.Age ,地区编码: @parent.RegionId
+						ID:@person.person.ID, 籍贯: @person.Province@person.City@person.Area@person.Street@person.Village
 					</div>
+					<p id="regionInfo"></p>
 				}
 			}
 
@@ -100,27 +102,27 @@
 			<div>
 				<label for="province">Province:</label>
 				<select id="province" name="province" class="form-control" value = "@Model.ProvinceId">
-					<option value="">@ViewData["Province"]</option>
+					<option value="@ViewData["Province"]">@ViewData["Province"]</option>
 				</select>
 
 				<label for="city">City:</label>
 				<select id="city" name="city" class="form-control">
-					<option value="">@ViewData["City"]</option>
+					<option value="@ViewData["City"]">@ViewData["City"]</option>
 				</select>
 
 				<label for="area">Area:</label>
 				<select id="area" name="Area" class="form-control">
-					<option value="">@ViewData["Area"]</option>
+					<option value="@ViewData["Area"]">@ViewData["Area"]</option>
 				</select>
 
 				<label for="street">Street:</label>
 				<select id="street" name="street" class="form-control">
-					<option value="">@ViewData["Street"]</option>
+					<option value="@ViewData["Street"]">@ViewData["Street"]</option>
 				</select>
 
 				<label for="village">Village:</label>
 				<select id="village" name="village" class="form-control">
-					<option value="">@ViewData["Village"]</option>
+					<option value="@ViewData["Village"]">@ViewData["Village"]</option>
 				</select>
 			</div>
 
@@ -140,7 +142,7 @@
 	@{
 		await Html.RenderPartialAsync("_ValidationScriptsPartial");
 		<script src="~/js/RegionsSelection.js"> </script>
-
+		<script src="~/js/DuplicateParentRegions.js"></script>
 	}
 }
 <script>
